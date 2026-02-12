@@ -1,0 +1,52 @@
+# Sample GeoJSON for Indian States
+# This is a simplified example. For production, use detailed GeoJSON from:
+# - DataMeet India Maps: https://github.com/datameet/maps
+# - Natural Earth Data: https://www.naturalearthdata.com/
+
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "TN",
+      "properties": {
+        "name": "Tamil Nadu",
+        "code": "TN",
+        "capital": "Chennai"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.5, 8.0],
+            [80.5, 8.0],
+            [80.5, 13.5],
+            [76.5, 13.5],
+            [76.5, 8.0]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GJ",
+      "properties": {
+        "name": "Gujarat",
+        "code": "GJ",
+        "capital": "Gandhinagar"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [68.0, 20.0],
+            [74.5, 20.0],
+            [74.5, 24.5],
+            [68.0, 24.5],
+            [68.0, 20.0]
+          ]
+        ]
+      }
+    }
+  ]
+}

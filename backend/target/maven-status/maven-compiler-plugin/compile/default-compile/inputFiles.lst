@@ -1,0 +1,13 @@
+D:\project\wind mill\backend\src\main\java\com\turbo\controller\WindDataController.java
+D:\project\wind mill\backend\src\main\java\com\turbo\model\ProfitabilityScore.java
+D:\project\wind mill\backend\src\main\java\com\turbo\model\WindData.java
+D:\project\wind mill\backend\src\main\java\com\turbo\dto\WindDataResponse.java
+D:\project\wind mill\backend\src\main\java\com\turbo\service\ProfitabilityEngine.java
+D:\project\wind mill\backend\src\main\java\com\turbo\model\Territory.java
+D:\project\wind mill\backend\src\main\java\com\turbo\repository\ProfitabilityScoreRepository.java
+D:\project\wind mill\backend\src\main\java\com\turbo\service\PDFReportService.java
+D:\project\wind mill\backend\src\main\java\com\turbo\repository\TerritoryRepository.java
+D:\project\wind mill\backend\src\main\java\com\turbo\dto\TerritoryResponse.java
+D:\project\wind mill\backend\src\main\java\com\turbo\TurboApplication.java
+D:\project\wind mill\backend\src\main\java\com\turbo\service\WindDataService.java
+D:\project\wind mill\backend\src\main\java\com\turbo\repository\WindDataRepository.java

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turbo - Wind Intelligence Portal</title>
+    <meta name="description" content="Professional Wind Energy Investment Decision Support System for India">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Stylesheets (v2 - fixed z-index and map visibility) -->
+    <link rel="stylesheet" href="css/styles.css?v=2.0">
+
+    <!-- Leaflet CSS - Free Map Library (No API Key Required!) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <!-- Leaflet JavaScript - Free Map Library -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 5L25 15L35 17L27 25L29 35L20 30L11 35L13 25L5 17L15 15L20 5Z" fill="#00BCD4"
+                        stroke="#00BCD4" stroke-width="2" />
+                </svg>
+                <h1>Turbo</h1>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn active" data-view="map">Map View</button>
+                <button class="nav-btn" data-view="analytics">Analytics</button>
+                <button class="nav-btn" data-view="about">About</button>
+                <button class="help-btn" id="helpBtn" title="Keyboard Shortcuts">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Map Container -->
+        <div id="map" class="map-container"></div>
+
+        <!-- Canvas Overlay for Wind Visualization -->
+        <canvas id="windCanvas" class="wind-canvas"></canvas>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="panel-header">
+                <h2>Wind Intelligence</h2>
+                <button class="panel-toggle" id="panelToggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M18 15l-6-6-6 6" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="panel-content" id="panelContent">
+                <!-- Search Section -->
+                <div class="search-section">
+                    <div class="search-box">
+                        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="M21 21l-4.35-4.35" />
+                        </svg>
+                        <input type="text" id="searchInput" placeholder="Search city or state..." class="search-input">
+                    </div>
+                    <button class="search-btn" id="searchBtn">Search</button>
+                </div>
+
+                <!-- Location Info -->
+                <div class="location-info" id="locationInfo">
+                    <div class="info-header">
+                        <h3 id="locationName">Select a location</h3>
+                        <span class="coordinates" id="coordinates">--</span>
+                    </div>
+                </div>
+
+                <!-- Profitability Grade Display -->
+                <div class="grade-display" id="gradeDisplay">
+                    <div class="grade-circle">
+                        <div class="grade-letter" id="gradeLetter">--</div>
+                        <div class="grade-label">Grade</div>
+                    </div>
+                    <div class="grade-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Score</span>
+                            <span class="detail-value" id="scoreValue">--</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Viability</span>
+                            <span class="detail-value" id="viabilityValue">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wind Data -->
+                <div class="wind-data" id="windData">
+                    <div class="data-grid">
+                        <div class="data-item">
+                            <div class="data-icon">💨</div>
+                            <div class="data-content">
+                                <span class="data-label">Wind Speed</span>
+                                <span class="data-value" id="windSpeed">-- m/s</span>
+                            </div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-icon">🧭</div>
+                            <div class="data-content">
+                                <span class="data-label">Direction</span>
+                                <span class="data-value" id="windDirection">--°</span>
+                            </div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-icon">⚡</div>
+                            <div class="data-content">
+                                <span class="data-label">Energy Yield</span>
+                                <span class="data-value" id="energyYield">-- kWh/yr</span>
+                            </div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-icon">📊</div>
+                            <div class="data-content">
+                                <span class="data-label">Capacity Factor</span>
+                                <span class="data-value" id="capacityFactor">--%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendation -->
+                <div class="recommendation" id="recommendation">
+                    <h4>Investment Recommendation</h4>
+                    <p id="recommendationText">Click on the map to analyze a location</p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="downloadReport" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Download Report
+                    </button>
+                    <button class="btn btn-secondary" id="shareBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="18" cy="5" r="3" />
+                            <circle cx="6" cy="12" r="3" />
+                            <circle cx="18" cy="19" r="3" />
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                        </svg>
+                        Share
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <h4>Wind Speed Legend</h4>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(90deg, #1E3A8A, #06B6D4);"></div>
+                    <span>Calm (0-2 m/s)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(90deg, #06B6D4, #10B981);"></div>
+                    <span>Light (2-5 m/s)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(90deg, #10B981, #FBBF24);"></div>
+                    <span>Moderate (5-8 m/s)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(90deg, #FBBF24, #F97316);"></div>
+                    <span>Fresh (8-12 m/s)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(90deg, #F97316, #EF4444);"></div>
+                    <span>Strong (12-15 m/s)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(90deg, #EF4444, #EC4899);"></div>
+                    <span>Gale (15+ m/s)</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Analytics View -->
+    <div id="analyticsView" class="analytics-view">
+        <div class="analytics-container">
+            <h2 class="analytics-title">Wind Data Analytics</h2>
+            <p class="analytics-subtitle">Comprehensive wind energy analysis and insights</p>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">💨</div>
+                    <div class="stat-content">
+                        <span class="stat-label">Avg Wind Speed</span>
+                        <span class="stat-value" id="avgWindSpeed">-- m/s</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-content">
+                        <span class="stat-label">Max Wind Speed</span>
+                        <span class="stat-value" id="maxWindSpeed">-- m/s</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔋</div>
+                    <div class="stat-content">
+                        <span class="stat-label">Avg Energy Yield</span>
+                        <span class="stat-value" id="avgEnergyYield">-- kWh/yr</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📍</div>
+                    <div class="stat-content">
+                        <span class="stat-label">Locations Analyzed</span>
+                        <span class="stat-value" id="totalLocations">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <canvas id="windSpeedChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="energyYieldChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="directionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About View -->
+    <div id="aboutView" class="about-view">
+        <div class="about-container">
+            <h2 class="about-title">About the Team</h2>
+            <p class="about-subtitle">Meet the talented developers behind Turbo Wind Intelligence Portal</p>
+
+            <div class="team-grid">
+                <!-- Team Member 1: Arunagiri -->
+                <div class="team-card">
+                    <div class="team-photo">
+                        <svg width="200" height="200" viewBox="0 0 200 200">
+                            <circle cx="100" cy="100" r="100" fill="url(#grad1)" />
+                            <text x="100" y="110" text-anchor="middle" font-size="60" fill="white"
+                                font-family="Outfit">A</text>
+                            <defs>
+                                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#00BCD4;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#0097A7;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="team-info">
+                        <h3>Arunagiri</h3>
+                        <p class="team-role">Backend Developer</p>
+                        <p class="team-description">Architected the Spring Boot backend, integrated OpenWeatherMap API,
+                            and implemented the profitability calculation engine.</p>
+                    </div>
+                </div>
+
+                <!-- Team Member 2: Dinesh Kannan -->
+                <div class="team-card">
+                    <div class="team-photo">
+                        <svg width="200" height="200" viewBox="0 0 200 200">
+                            <circle cx="100" cy="100" r="100" fill="url(#grad2)" />
+                            <text x="100" y="110" text-anchor="middle" font-size="60" fill="white"
+                                font-family="Outfit">DK</text>
+                            <defs>
+                                <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="team-info">
+                        <h3>Dinesh Kannan</h3>
+                        <p class="team-role">Database Engineer</p>
+                        <p class="team-description">Designed and optimized the MySQL database schema, ensuring efficient
+                            data storage and retrieval for wind analytics.</p>
+                    </div>
+                </div>
+
+                <!-- Team Member 3: Devasri -->
+                <div class="team-card">
+                    <div class="team-photo">
+                        <svg width="200" height="200" viewBox="0 0 200 200">
+                            <circle cx="100" cy="100" r="100" fill="url(#grad3)" />
+                            <text x="100" y="110" text-anchor="middle" font-size="60" fill="white"
+                                font-family="Outfit">D</text>
+                            <defs>
+                                <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#F97316;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#EA580C;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="team-info">
+                        <h3>Devasri</h3>
+                        <p class="team-role">Frontend Developer</p>
+                        <p class="team-description">Created the stunning UI/UX with Leaflet maps, real-time wind
+                            visualization, and responsive design for all devices.</p>
+                    </div>
+                </div>
+
+                <!-- Team Member 4: Harini -->
+                <div class="team-card">
+                    <div class="team-photo">
+                        <svg width="200" height="200" viewBox="0 0 200 200">
+                            <circle cx="100" cy="100" r="100" fill="url(#grad4)" />
+                            <text x="100" y="110" text-anchor="middle" font-size="60" fill="white"
+                                font-family="Outfit">H</text>
+                            <defs>
+                                <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#EC4899;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#DB2777;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="team-info">
+                        <h3>Harini</h3>
+                        <p class="team-role">API Developer</p>
+                        <p class="team-description">Built RESTful API endpoints, handled data integration, and ensured
+                            seamless communication between frontend and backend.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Analyzing wind data...</p>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Chart.js Library for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- Scripts (v3 - with navigation and analytics) -->
+    <script src="js/api-client.js?v=3.0"></script>
+    <script src="js/map-controller.js?v=3.0"></script>
+    <script src="js/territory-layer.js?v=3.0"></script>
+    <script src="js/wind-visualization.js?v=3.0"></script>
+    <script src="js/navigation.js?v=3.0"></script>
+    <script src="js/analytics.js?v=3.0"></script>
+    <script src="js/keyboard-shortcuts.js?v=3.0"></script>
+    <script src="js/ui-controller.js?v=3.0"></script>
+    <script src="js/report-generator.js?v=3.0"></script>
+    <script src="js/app.js?v=3.0"></script>
+</body>
+
+</html>

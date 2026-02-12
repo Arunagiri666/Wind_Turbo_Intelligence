@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turbo - Wind Intelligence Portal</title>
+    <meta name="description" content="Professional Wind Energy Investment Decision Support System for India">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Google Maps API - REPLACE WITH YOUR API KEY -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsLF3MpfILkET9etBlGUwaERBJVD3SgNU&libraries=visualization"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 5L25 15L35 17L27 25L29 35L20 30L11 35L13 25L5 17L15 15L20 5Z" fill="#00BCD4"
+                        stroke="#00BCD4" stroke-width="2" />
+                </svg>
+                <h1>Turbo</h1>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn active" data-view="map">Map View</button>
+                <button class="nav-btn" data-view="analytics">Analytics</button>
+                <button class="nav-btn" data-view="about">About</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Map Container -->
+        <div id="map" class="map-container"></div>
+
+        <!-- Canvas Overlay for Wind Visualization -->
+        <canvas id="windCanvas" class="wind-canvas"></canvas>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="panel-header">
+                <h2>Wind Intelligence</h2>
+                <button class="panel-toggle" id="panelToggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M18 15l-6-6-6 6" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="panel-content" id="panelContent">
+                <!-- Search Section -->
+                <div class="search-section">
+                    <div class="search-box">
+                        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="M21 21l-4.35-4.35" />
+                        </svg>
+                        <input type="text" id="searchInput" placeholder="Search city or state..." class="search-input">
+                    </div>
+                    <button class="search-btn" id="searchBtn">Search</button>
+                </div>
+
+                <!-- Location Info -->
+                <div class="location-info" id="locationInfo">
+                    <div class="info-header">
+                        <h3 id="locationName">Select a location</h3>
+                        <span class="coordinates" id="coordinates">--</span>
+                    </div>
+                </div>
+
+                <!-- Profitability Grade Display -->
+                <div class="grade-display" id="gradeDisplay">
+                    <div class="grade-circle">
+                        <div class="grade-letter" id="gradeLetter">--</div>
+                        <div class="grade-label">Grade</div>
+                    </div>
+                    <div class="grade-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Score</span>
+                            <span class="detail-value" id="scoreValue">--</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Viability</span>
+                            <span class="detail-value" id="viabilityValue">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wind Data -->
+                <div class="wind-data" id="windData">
+                    <div class="data-grid">
+                        <div class="data-item">
+                            <div class="data-icon">💨</div>
+                            <div class="data-content">
+                                <span class="data-label">Wind Speed</span>
+                                <span class="data-value" id="windSpeed">-- m/s</span>
+                            </div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-icon">🧭</div>
+                            <div class="data-content">
+                                <span class="data-label">Direction</span>
+                                <span class="data-value" id="windDirection">--°</span>
+                            </div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-icon">⚡</div>
+                            <div class="data-content">
+                                <span class="data-label">Energy Yield</span>
+                                <span class="data-value" id="energyYield">-- kWh/yr</span>
+                            </div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-icon">📊</div>
+                            <div class="data-content">
+                                <span class="data-label">Capacity Factor</span>
+                                <span class="data-value" id="capacityFactor">--%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendation -->
+                <div class="recommendation" id="recommendation">
+                    <h4>Investment Recommendation</h4>
+                    <p id="recommendationText">Click on the map to analyze a location</p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="downloadReport" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Download Report
+                    </button>
+                    <button class="btn btn-secondary" id="shareBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="18" cy="5" r="3" />
+                            <circle cx="6" cy="12" r="3" />
+                            <circle cx="18" cy="19" r="3" />
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                        </svg>
+                        Share
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <h4>Wind Speed Legend</h4>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(90deg, #1E3A8A, #06B6D4);"></div>
+                    <span>Calm (0-2 m/s)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(90deg, #06B6D4, #10B981);"></div>
+                    <span>Light (2-5 m/s)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(90deg, #10B981, #FBBF24);"></div>
+                    <span>Moderate (5-8 m/s)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(90deg, #FBBF24, #F97316);"></div>
+                    <span>Fresh (8-12 m/s)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(90deg, #F97316, #EF4444);"></div>
+                    <span>Strong (12-15 m/s)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(90deg, #EF4444, #EC4899);"></div>
+                    <span>Gale (15+ m/s)</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Analyzing wind data...</p>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api-client.js"></script>
+    <script src="js/map-controller.js"></script>
+    <script src="js/territory-layer.js"></script>
+    <script src="js/wind-visualization.js"></script>
+    <script src="js/ui-controller.js"></script>
+    <script src="js/report-generator.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
